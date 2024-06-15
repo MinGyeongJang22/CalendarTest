@@ -9,43 +9,62 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import dao.DeptDAO;
-import vo.DeptVO;
+import dao.CalendarDAO;
+import vo.CalendarVO;
 
 @Controller
-public class DeptController {
+public class CalendarController {
 	
-	public static final String VIEW_PATH_user = "/WEB-INF/views/dept/";
 	public static final String VIEW_PATH_calen = "/WEB-INF/views/calenderF/";
 	
-	DeptDAO dept_dao;
+	/*
+	 * @Autowired HttpServletRequest request;
+	 * 
+	 * @Autowired HttpServletResponse response;
+	 */
+
+	CalendarDAO calen_dao;
 	
-	public DeptController( DeptDAO dept_dao ) {
-		this.dept_dao = dept_dao;
+	public CalendarController( CalendarDAO calen_dao ) {
+		this.calen_dao = calen_dao;
 	}
 	
 	@RequestMapping("/")
-	public String list()  {
+	public String list(Model model)  {
+		// 임시로 모든 리스트 출력
+		System.out.println("asdasdas");
+		List<CalendarVO> list = calen_dao.selectcalender();
+		model.addAttribute("list", list);
 		return VIEW_PATH_calen + "mainF.jsp";
 	}
 	
-	@RequestMapping("/cal.do")
-	public String calen(HttpServletRequest request, HttpServletResponse response) throws IOException  {
-		//인코딩 ? 이거 필요 없을 듯
-		request.setCharacterEncoding("UTF-8");
-		response.setContentType("text/html; charset=UTF-8");
-		
-		// 요청받을 변수 선업
+	// 사용자 달력 조회
+	@RequestMapping("/cal_user.do")
+	public String calendar_user(String id, Model model, HttpServletRequest request, HttpServletResponse response)  {
+		// 요청받을 변수 선언
 		String command = request.getParameter("command");
+		List<CalendarVO> list = calen_dao.select_userCalender(id);
+		model.addAttribute("list", list);
 		
 		return VIEW_PATH_calen + "calenF.jsp";
 	}
 	
+	// 팀 달력 조회
+	@RequestMapping("/cal_team.do")
+	public String calendar_team(String team_name, Model model ,HttpServletRequest request, HttpServletResponse response ) {
+		// 요청받을 변수 선언
+		String command = request.getParameter("command");
+		List<CalendarVO> list = calen_dao.select_teamCalender(team_name);
+		model.addAttribute("list", list);
+		
+		return VIEW_PATH_calen + "calenF.jsp";
+	}
 	
 	
 	
@@ -54,7 +73,7 @@ public class DeptController {
 	@RequestMapping( value = { "/" , "/list.do" } )
 	public String list( Model model ) {
 		//dao로부터 부서 목록 가져온다.
-		List<DeptVO> list = dept_dao.selectDept();
+		List<DeptVO> list = calen_dao.selectDept();
 		model.addAttribute("list", list);
 		return VIEW_PATH + "dept_list.jsp";
 	}
@@ -67,7 +86,7 @@ public class DeptController {
 	// 새 글 등록
 	@RequestMapping("/insert.do")
 	public String insertDept( DeptVO vo ) {
-		dept_dao.insert(vo);
+		calen_dao.insert(vo);
 		
 		// response.sendRedirect("list.do");
 		return "redirect:list.do";
@@ -76,7 +95,7 @@ public class DeptController {
 	// 부서 삭제
 	@RequestMapping("/del_dept.do")
 	public String deleteDept(int deptno) {
-		dept_dao.delete(deptno);
+		calen_dao.delete(deptno);
 		
 		return "redirect:list.do";
 	}
@@ -84,7 +103,7 @@ public class DeptController {
 	// 특정 부서 정보 조회
 	@RequestMapping("/modify_form.do")
 	public String modifyForm(int deptno,  Model model) {
-		DeptVO vo = dept_dao.selectOne(deptno);
+		DeptVO vo = calen_dao.selectOne(deptno);
 		model.addAttribute("vo", vo);
 		return VIEW_PATH + "update_form.jsp";
 	}
@@ -100,7 +119,7 @@ public class DeptController {
 		// 수정에 필요한 정보인 vo와 c_deptno를 map에 저장
 		map.put("vo", vo);
 		map.put("c_deptno", c_deptno);
-		int res = dept_dao.update(map);
+		int res = calen_dao.update(map);
 		
 		String result = "no";
 		if( res > 0 ) {

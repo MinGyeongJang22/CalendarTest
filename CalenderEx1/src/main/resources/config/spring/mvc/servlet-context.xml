@@ -21,10 +21,12 @@
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
 	<context:component-scan base-package="com.kh.db" /> -->
+
+	<context:annotation-config/>
 	
 	<!-- 수동으로 DeptController클래스 생성 -->	
-	<beans:bean class="controller.DeptController">
-		<beans:constructor-arg ref="dept_daoBean"/>
+	<beans:bean class="controller.CalendarController">
+		<beans:constructor-arg ref="calen_daoBean"/>
 	</beans:bean>
 	
 	
