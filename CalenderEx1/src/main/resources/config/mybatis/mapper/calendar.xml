@@ -15,7 +15,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	
 	<!-- 팀별 일정 조회 -->
 	 <select id="calendar_Teamlist" resultType="vo.CalendarVO" parameterType="String">
-		select * from calendar where team_name = #{team__name}
+		select * from calendar where team_name = #{team_name}
 	</select>
 	
 <!-- 	새 일정 추가 -->
@@ -27,6 +27,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 									  #{id},
 									  #{team_name} )	
 	</insert>
+	
+	<update id="calendar_day_update" parameterType="vo.CalendarVO">
+		update calendar set start_day = TO_DATE(#{start_day}, 'YYYY-MM-DD'),
+							end_day = TO_DATE(#{end_day}, 'YYYY-MM-DD')
+			where date_idx=#{date_idx} 
+	</update>
+	
 	
 <!-- 	일정 삭제 -->
 	<delete id="calendar_delete" parameterType="int">

@@ -34,6 +34,11 @@ public class CalendarDAO {
 
 	// 새 일정 추가
 	public int insert( CalendarVO vo ) {
+		
+		if(vo.getTeam_name() == null || vo.getTeam_name().isEmpty()) {
+			vo.setTeam_name("null");
+		}
+		
 		int res = sqlSession.insert("calen.calendar_insert", vo);
 		return res;
 	}
@@ -43,6 +48,14 @@ public class CalendarDAO {
 		int res = sqlSession.delete("calen.calendar_delete", date_idx);
 		return res;
 	}
+	
+	public int day_update( CalendarVO vo ) {
+		System.out.println("시작일 : "+vo.getStart_day());
+		System.out.println("종료일 : "+vo.getEnd_day());
+		int res = sqlSession.update("calen.calendar_day_update", vo);
+		return res;
+	}
+	
 	
 	//특정 일정 정보 조회
 //	public CalenderVO selectOne( int date_idx ) {

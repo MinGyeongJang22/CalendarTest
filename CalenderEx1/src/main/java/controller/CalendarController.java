@@ -1,15 +1,13 @@
 package controller;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,12 +20,6 @@ import vo.CalendarVO;
 public class CalendarController {
 	
 	public static final String VIEW_PATH_calen = "/WEB-INF/views/calenderF/";
-	
-	/*
-	 * @Autowired HttpServletRequest request;
-	 * 
-	 * @Autowired HttpServletResponse response;
-	 */
 
 	CalendarDAO calen_dao;
 	
@@ -35,7 +27,7 @@ public class CalendarController {
 		this.calen_dao = calen_dao;
 	}
 	
-	@RequestMapping("/")
+	@RequestMapping(value= {"/", "/list.do"})
 	public String list(Model model)  {
 		// 임시로 모든 리스트 출력
 		System.out.println("asdasdas");
@@ -66,6 +58,50 @@ public class CalendarController {
 		return VIEW_PATH_calen + "calenF.jsp";
 	}
 	
+	@RequestMapping("/calendar_insert.do")
+	@ResponseBody
+	public String insertForm(CalendarVO vo) {
+		int res = calen_dao.insert(vo);
+		
+		String result = "no";
+		if( res > 0 ) {
+			result = "yes";
+		}
+		
+		//콜백메서드로 최종 결과값 전달
+		return result;
+	}
+	
+	@RequestMapping("/calendar_day_update.do")
+	@ResponseBody
+	public String day_update(CalendarVO vo) throws Exception {
+		System.out.println(vo.getStart_day());
+		System.out.println(vo.getEnd_day());
+		System.out.println(vo.getDate_idx());
+		
+		/*
+		SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+		SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd");
+		
+		Date startdate = isoFormat.parse(vo.getStart_day());
+		String start_day = dbFormat.format(startdate);
+		
+		Date enddate = isoFormat.parse(vo.getEnd_day());
+		String end_day = dbFormat.format(enddate);
+		
+		vo.setStart_day(start_day);
+		vo.setEnd_day(end_day);
+		*/
+		int res = calen_dao.day_update(vo);
+		
+		String result = "no";
+		if( res > 0 ) {
+			result = "yes";
+		}
+		
+		//콜백메서드로 최종 결과값 전달
+		return result;
+	}
 	
 	
 	
@@ -78,10 +114,6 @@ public class CalendarController {
 		return VIEW_PATH + "dept_list.jsp";
 	}
 	// 새 글 추가를 위한 폼
-	@RequestMapping("/insert_form.do")
-	public String insertForm() {
-		return VIEW_PATH + "insert_form2.jsp";
-	}
 	
 	// 새 글 등록
 	@RequestMapping("/insert.do")
