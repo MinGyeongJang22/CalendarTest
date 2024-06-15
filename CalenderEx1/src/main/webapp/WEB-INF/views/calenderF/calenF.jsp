@@ -64,18 +64,18 @@
 	        },
 	        
 	        // 일정 길이 변화 수정 >> 해결 안됨
-	        eventResize: function(event, delta, revertFunc) {
+	        eventResize: function(info) {
 	            // 리사이즈된 이벤트의 정보 출력
 	            console.log('이벤트가 리사이즈되었습니다.');
 	            console.log('리사이즈된 이벤트:', event);
-	            console.log('리사이즈된 이벤트:', event._instance.startStr);
-	            console.log('리사이즈된 이벤트:', event._instance.endStr);
+	            console.log('리사이즈된 이벤트:', event.startStr);
+	            console.log('리사이즈된 이벤트:', event.event.endStr);
 	            console.log('변화량:', event._instance.endDelta);
 	        	
 	        	let url = "calendar_day_update.do";
-	            let param = "start_day=" + event._instance.startStr +
-	                        "&end_day=" + event._instance.endStr +
-	                        "&date_idx=" + event._instance.id;
+	            let param = "start_day=" + event.startStr.toISOString() +
+	                        "&end_day=" + event.endStr.toISOString() +
+	                        "&date_idx=" + event.id;
 
 	            sendRequest(url, param, day_updFn, "get");
 	        }
